@@ -28,6 +28,10 @@
 ;; - PWM < 30%: set-rpm *fixed-rpm* (RPM mode - constant speed)
 ;; - PWM ≥ 30%: set-duty <read-from-PWM> (Duty Cycle mode - direct control)
 ;;
+;; CAN Bus Configuration:
+;; - VESC HP: CAN ID 100
+;; - VESC Express: CAN ID 6 (monitoring only)
+;;
 ;; VESC Express connected via CAN bus for system monitoring.
 ;; WLAN enabled for VESC Tool monitoring via PC.
 ;;
