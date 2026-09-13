@@ -1,90 +1,17 @@
-;; Copyright (c) 2026 StratoWAVE
-;; Author: Petar Franček (external contributor, Zagreb)
-;; SPDX-License-Identifier: GPL-3.0-or-later
-;; Based on VESC Project (https://vesc-project.com)
-;;
-;; This software is provided 'as-is', without any express or implied
-;; warranty. In no event will the authors be held liable for any damages
-;; arising from the use of this software.
-;;
-;; Permission is granted to anyone to use this software for any purpose,
-;; including commercial applications, and to alter it and redistribute it
-;; freely, subject to the following restrictions:
-;;
-;; 1. The origin of this software must not be misrepresented; you must not
-;;    claim that you wrote the original software. If you use this software
-;;    in a product, an acknowledgment in the product documentation would be
-;;    appreciated but is not required.
-;;
-;; 2. Altered source versions must be plainly marked as such, and must not be
-;;    misrepresented as being the original software.
-;;
-;; 3. This notice may not be removed or altered from any source distribution.
-;;
-;;
-;; setStarter.lbm - VESC HP Starter Generator Script
-;;
-;; Hybrid mode control with PWM threshold:
-;; - PWM < 30%: set-rpm *fixed-rpm* (RPM mode - constant speed)
-;; - PWM ≥ 30%: set-duty <read-from-PWM> (Duty Cycle mode - direct control)
-;;
-;; CAN Bus Configuration:
-;; - VESC HP: CAN ID 100
-;; - VESC Express: CAN ID 6 (monitoring only)
-;;
-;; VESC Express connected via CAN bus for system monitoring.
-;; WLAN enabled for VESC Tool monitoring via PC.
-;;
-;; TODO (SAFETY):
-;; - Add timeout-reset to prevent runaway motor (see setDuo scripts)
-;; - Add PWM debounce to filter noise (see VESC LBM docs for debounce)
-;; - Add RPM limits (min/max safe operating range)
-;; - Add motor stall detection
+;; setStarter.lbm - Dual-mode control with threshold
+;; PWM < 20% -> RPM mode (5000 RPM)
+;; PWM >= 20% -> Duty mode (direct mapping)
 
-;; Configuration constants
-(def *pwm-threshold* 0.30)    ;; PWM threshold (30%)
-(def *fixed-rpm* 3150)        ;; Fixed RPM target for Mode 1 (<30% PWM)
-(def *pwm-input* 1)           ;; PWM input channel (1 = main PWM input)
-(def *update-interval* 0.05)  ;; Update every 0.05s (20Hz)
+(def *update-interval* 0.05)
+(def *threshold* 0.2)
 
-;; === PWM FUNCTIONS ===
-
-(defun read-pwm-percent ()
-  "Read PWM input and return duty cycle as percentage (0-100)."
-  (var duty (get-pwm-input-duty *pwm-input*))
-  (* duty 100.0))
-
-(defun is-pwm-above-threshold ()
-  "Check if PWM input is above threshold."
-  (>= (read-pwm-percent) (* *pwm-threshold* 100.0)))
-
-;; === MAIN ===
-
-(print "VESC HP Starter Generator Starting...")
-
-;; Main loop - RPM mode with PWM threshold logic
 (loopwhile t {
+    (var pwm-duty (get-PPM))
 
-        ;; Determine which mode to use based on PWM threshold
-        (var use-rpm-mode (not (is-pwm-above-threshold)))
+    (if (< pwm-duty *threshold*)
+        (set-rpm 5000)
+        (set-duty pwm-duty))
 
-        ;; Set motor based on mode
-        (if use-rpm-mode
-            ;; Mode 1: RPM mode with fixed RPM
-            (progn
-                (select-motor 1)
-                (set-rpm *fixed-rpm*))
-            ;; Mode 2: Duty Cycle mode with PWM input
-            (progn
-                (var target-duty (read-pwm-percent))
-                ;; Limit duty cycle to safe range (0-100%)
-                (if (> target-duty 100.0) (setq target-duty 100.0))
-                (if (< target-duty 0.0) (setq target-duty 0.0))
-                (select-motor 1)
-                (set-duty target-duty)))
-
-        ;; Send CAN status updates (for VESC Express monitoring)
-        (can-send-status)
-
-        (sleep *update-interval*)
+    (timeout-reset)
+    (sleep *update-interval*)
 })
