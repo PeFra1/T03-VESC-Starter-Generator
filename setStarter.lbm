@@ -17,7 +17,7 @@
 ;;
 ;; Usage:
 ;; 1. Upload to VESC HP
-;; 2. Script runs automatically after upload
+;; 2. Script runs automatically after VESC restart
 
 (def *update-interval* 0.05)
 (def *threshold* 0.2)
