@@ -43,3 +43,9 @@
 3. [ ] Document PWM input mapping
 4. [ ] Test basic motor rotation
 5. [ ] Implement starter script
+6. [ ] **SAFETY: Add timeout-reset to prevent runaway motor**
+7. [ ] Implement debounce for PWM input
+8. [ ] Add RPM limits (min/max safe operating range)
+9. [ ] Test PWM threshold switching (30%)
+10. [ ] Validate VESC Tool WLAN connection
+11. [ ] Engine test: full start sequence
