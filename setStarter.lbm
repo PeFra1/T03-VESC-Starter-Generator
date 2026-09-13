@@ -1,0 +1,75 @@
+;; Copyright (c) 2026 StratoWAVE
+;; Author: Petar Franček (external contributor, Zagreb)
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;; Based on VESC Project (https://vesc-project.com)
+;;
+;; This software is provided 'as-is', without any express or implied
+;; warranty. In no event will the authors be held liable for any damages
+;; arising from the use of this software.
+;;
+;; Permission is granted to anyone to use this software for any purpose,
+;; including commercial applications, and to alter it and redistribute it
+;; freely, subject to the following restrictions:
+;;
+;; 1. The origin of this software must not be misrepresented; you must not
+;;    claim that you wrote the original software. If you use this software
+;;    in a product, an acknowledgment in the product documentation would be
+;;    appreciated but is not required.
+;;
+;; 2. Altered source versions must be plainly marked as such, and must not be
+;;    misrepresented as being the original software.
+;;
+;; 3. This notice may not be removed or altered from any source distribution.
+;;
+;;
+;; setStarter.lbm - VESC HP Starter Generator Script
+;;
+;; PWM-based duty cycle control with threshold:
+;; - PWM < 30%: Use fixed duty cycle (*fixed-duty*) as RPM target
+;; - PWM ≥ 30%: Read duty cycle from PWM input as RPM target
+;;
+;; Both modes use RPM control. The RPM target value is used directly
+;; (e.g., 15.0 = 15 RPM in Mode 1, or 5000 RPM from PWM in Mode 2).
+;; VESC Express connected via CAN bus for system monitoring.
+;; WLAN enabled for VESC Tool monitoring via PC.
+
+;; Configuration constants
+(def *pwm-threshold* 0.30)    ;; PWM threshold (30%)
+(def *fixed-duty* 15.0)       ;; Fixed duty cycle (%) for Mode 1 (<30% PWM)
+(def *pwm-input* 1)           ;; PWM input channel (1 = main PWM input)
+(def *update-interval* 0.05)  ;; Update every 0.05s (20Hz)
+
+;; === PWM FUNCTIONS ===
+
+(defun read-pwm-percent ()
+  "Read PWM input and return duty cycle as percentage (0-100)."
+  (var duty (get-pwm-input-duty *pwm-input*))
+  (* duty 100.0))
+
+(defun is-pwm-above-threshold ()
+  "Check if PWM input is above threshold."
+  (>= (read-pwm-percent) (* *pwm-threshold* 100.0)))
+
+;; === MAIN ===
+
+(print "VESC HP Starter Generator Starting...")
+
+;; Main loop - RPM mode with PWM threshold logic
+(loopwhile t {
+
+        ;; Determine which mode to use
+        (var use-fixed-duty (not (is-pwm-above-threshold)))
+
+        ;; Set target duty cycle based on mode
+        (var target-duty (if use-fixed-duty *fixed-duty* (read-pwm-percent)))
+
+        ;; Limit duty cycle to safe range (0-100%)
+        (if (> target-duty 100.0) (setq target-duty 100.0))
+        (if (< target-duty 0.0) (setq target-duty 0.0))
+
+        ;; Set motor to RPM mode with calculated duty
+        (select-motor 1)
+        (set-rpm target-duty)
+
+        (sleep *update-interval*)
+})
