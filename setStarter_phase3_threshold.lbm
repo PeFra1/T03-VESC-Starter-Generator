@@ -24,7 +24,7 @@
 
 (def *update-interval* 0.05)  ;; Update every 0.05s (20Hz)
 (def *log-interval* 20)       ;; Log every 20 updates (1s)
-(def *threshold* 0.3)         ;; PWM threshold for mode switch (30%)
+(def *threshold* 0.2)         ;; PWM threshold for mode switch (20%)
 (def *max-duty* 0.5)          ;; Max duty cycle = 50%
 
 ;; === DEBUG OPTIONS ===
@@ -40,9 +40,9 @@
 
 (print "=== VESC HP Phase 3: Threshold-based Dual-Mode ===")
 (print "Input: get-PPM (-1.0 to +1.0)")
-(print "Threshold: 30% (configurable)")
-(print "Mode 1 (RPM): PWM < 30% -> set-rpm (5000 RPM fixed)")
-(print "Mode 2 (Duty): PWM >= 30% -> set-duty (±50% limit)")
+(print "Threshold: 20% (configurable)")
+(print "Mode 1 (RPM): PWM < 20% -> set-rpm (5000 RPM fixed)")
+(print "Mode 2 (Duty): PWM >= 20% -> set-duty (±50% limit)")
 (print "=================================================")
 (print "")
 
