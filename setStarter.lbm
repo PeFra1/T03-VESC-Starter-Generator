@@ -25,11 +25,11 @@
 ;; setStarter.lbm - VESC HP Starter Generator Script
 ;;
 ;; PWM-based duty cycle control with threshold:
-;; - PWM < 30%: Use fixed duty cycle (*fixed-duty*) as RPM target
-;; - PWM ≥ 30%: Read duty cycle from PWM input as RPM target
+;; - PWM < 30%: Use fixed duty cycle (*fixed-duty*) in Duty Cycle mode
+;; - PWM ≥ 30%: Read duty cycle from PWM input in Duty Cycle mode
 ;;
-;; Both modes use RPM control. The RPM target value is used directly
-;; (e.g., 15.0 = 15 RPM in Mode 1, or 5000 RPM from PWM in Mode 2).
+;; Both modes use Duty Cycle control (not RPM mode).
+;; The input is interpreted as percentage (0-100% duty cycle).
 ;; VESC Express connected via CAN bus for system monitoring.
 ;; WLAN enabled for VESC Tool monitoring via PC.
 ;;
@@ -73,9 +73,9 @@
         (if (> target-duty 100.0) (setq target-duty 100.0))
         (if (< target-duty 0.0) (setq target-duty 0.0))
 
-        ;; Set motor to RPM mode with calculated duty
+        ;; Set motor to Duty Cycle mode with calculated duty
         (select-motor 1)
-        (set-rpm target-duty)
+        (set-duty target-duty)
 
         (sleep *update-interval*)
 })
