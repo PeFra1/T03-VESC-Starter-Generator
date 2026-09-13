@@ -24,12 +24,10 @@
 ;;
 ;; setStarter.lbm - VESC HP Starter Generator Script
 ;;
-;; PWM-based duty cycle control with threshold:
-;; - PWM < 30%: Use fixed duty cycle (*fixed-duty*) in Duty Cycle mode
-;; - PWM ≥ 30%: Read duty cycle from PWM input in Duty Cycle mode
+;; Hybrid mode control with PWM threshold:
+;; - PWM < 30%: set-rpm *fixed-rpm* (RPM mode - constant speed)
+;; - PWM ≥ 30%: set-duty <read-from-PWM> (Duty Cycle mode - direct control)
 ;;
-;; Both modes use Duty Cycle control (not RPM mode).
-;; The input is interpreted as percentage (0-100% duty cycle).
 ;; VESC Express connected via CAN bus for system monitoring.
 ;; WLAN enabled for VESC Tool monitoring via PC.
 ;;
@@ -41,7 +39,7 @@
 
 ;; Configuration constants
 (def *pwm-threshold* 0.30)    ;; PWM threshold (30%)
-(def *fixed-duty* 15.0)       ;; Fixed duty cycle (%) for Mode 1 (<30% PWM)
+(def *fixed-rpm* 3150)        ;; Fixed RPM target for Mode 1 (<30% PWM)
 (def *pwm-input* 1)           ;; PWM input channel (1 = main PWM input)
 (def *update-interval* 0.05)  ;; Update every 0.05s (20Hz)
 
@@ -63,19 +61,23 @@
 ;; Main loop - RPM mode with PWM threshold logic
 (loopwhile t {
 
-        ;; Determine which mode to use
-        (var use-fixed-duty (not (is-pwm-above-threshold)))
+        ;; Determine which mode to use based on PWM threshold
+        (var use-rpm-mode (not (is-pwm-above-threshold)))
 
-        ;; Set target duty cycle based on mode
-        (var target-duty (if use-fixed-duty *fixed-duty* (read-pwm-percent)))
-
-        ;; Limit duty cycle to safe range (0-100%)
-        (if (> target-duty 100.0) (setq target-duty 100.0))
-        (if (< target-duty 0.0) (setq target-duty 0.0))
-
-        ;; Set motor to Duty Cycle mode with calculated duty
-        (select-motor 1)
-        (set-duty target-duty)
+        ;; Set motor based on mode
+        (if use-rpm-mode
+            ;; Mode 1: RPM mode with fixed RPM
+            (progn
+                (select-motor 1)
+                (set-rpm *fixed-rpm*))
+            ;; Mode 2: Duty Cycle mode with PWM input
+            (progn
+                (var target-duty (read-pwm-percent))
+                ;; Limit duty cycle to safe range (0-100%)
+                (if (> target-duty 100.0) (setq target-duty 100.0))
+                (if (< target-duty 0.0) (setq target-duty 0.0))
+                (select-motor 1)
+                (set-duty target-duty)))
 
         (sleep *update-interval*)
 })
