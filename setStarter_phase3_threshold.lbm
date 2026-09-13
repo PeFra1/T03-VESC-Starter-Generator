@@ -33,6 +33,7 @@
 
 ;; Counter for logging
 (def *log-counter* 0)
+(def *mode* 0)                ;; 0 = RPM, 1 = Duty
 
 ;; === MAIN ===
 
@@ -50,19 +51,15 @@
         (var pwm-duty (get-PPM))
 
         ;; Determine mode based on threshold
-        (var mode "unknown")
-        (var target 0.0)
-
         (if (< pwm-duty *threshold*)
             ;; === RPM MODE (PWM < threshold) ===
             (progn
-                (setq mode "RPM")
+                (setq *mode* 0)
                 ;; Fixed 5000 RPM
-                (set-rpm 5000)
-                (setq target 5000))
+                (set-rpm 5000))
             ;; === DUTY MODE (PWM >= threshold) ===
             (progn
-                (setq mode "DUTY")
+                (setq *mode* 1)
                 ;; Limit duty cycle to ±50% using if (like T02 scripts)
                 (var duty-limit pwm-duty)
                 (if (> pwm-duty *max-duty*)
@@ -70,8 +67,7 @@
                     (if (< pwm-duty (- *max-duty*))
                         (setq duty-limit (- *max-duty*))
                         duty-limit))
-                (set-duty duty-limit)
-                (setq target duty-limit)))
+                (set-duty duty-limit)))
 
         ;; Increment counter
         (setq *log-counter* (+ *log-counter* 1))
@@ -80,15 +76,9 @@
         (if (and (= *debug-mode* 1) (>= *log-counter* *log-interval*))
             (progn
                 (setq *log-counter* 0)
-                (print "Mode:")
-                (print mode)
-                (if (= mode "RPM")
-                    (progn
-                        (print "5000 RPM")
-                        (print ""))
-                    (progn
-                        (print (str-from-n target "Duty: %.1f%%"))
-                        (print "")))))
+                (if (= *mode* 0)
+                    (print "Mode: RPM (5000 RPM)")
+                    (print (str-from-n duty-limit "Mode: Duty (%.1f%%)")))))
 
         ;; Reset timeout to prevent fault
         (timeout-reset)
