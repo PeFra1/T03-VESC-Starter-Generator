@@ -3,13 +3,14 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Based on VESC Project (https://vesc-project.com)
 ;;
-;; setStarter_phase1_log_pwm.lbm - Phase 1: Log PPM input for debugging
+;; setStarter_phase1_log_pwm.lbm - Phase 1: Log PWM input for debugging
 ;;
-;; This script reads PPM input and logs:
-;; - PPM duty cycle (0-1)
-;; - PPM percentage (0-100)
+;; This script reads PWM input (via get-PPM) and logs:
+;; - PWM duty cycle (-1.0 to +1.0, bidirectional)
+;; - PWM percentage (-100 to +100)
 ;;
-;; Note: VESC PPM input is read via get-PPM (not get-pwm-input-duty)
+;; Note: VESC PPM application reads PWM signals from RC receivers
+;; The get-PPM function returns the normalized PWM value
 
 ;; Configuration
 (def *update-interval* 0.05)  ;; Update every 0.05s (20Hz)
@@ -20,8 +21,8 @@
 
 ;; === MAIN ===
 
-(print "=== VESC HP Phase 1: PPM Logger ===")
-(print "PPM Input: Default channel")
+(print "=== VESC HP Phase 1: PWM Logger ===")
+(print "PWM Input: Default channel (PPM)")
 (print "Update Rate: 20Hz (every 0.05s)")
 (print "Log Interval: 1s")
 (print "====================================")
@@ -39,7 +40,7 @@
         (if (>= *log-counter* *log-interval*)
             (progn
                 (setq *log-counter* 0)
-                (print "PPM:")
+                (print "PWM:")
                 (print ppm-percent)
                 (print "% duty (")
                 (print ppm-duty)
