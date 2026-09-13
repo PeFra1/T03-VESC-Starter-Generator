@@ -1,6 +1,23 @@
+;; Copyright (c) 2026 StratoWAVE
+;; Author: Petar Franček (external contributor, Zagreb)
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;; Based on VESC Project (https://vesc-project.com)
+;;
 ;; setStarter.lbm - Dual-mode control with threshold
-;; PWM < 20% -> RPM mode (5000 RPM)
-;; PWM >= 20% -> Duty mode (direct mapping)
+;;
+;; This script reads PWM input and switches between RPM mode and duty cycle mode
+;; based on a configurable threshold.
+;;
+;; Architecture:
+;; - Input: get-PPM returns -1.0 to +1.0 (PWM duty cycle)
+;; - Threshold: Configurable PWM threshold (default 20% = 0.2)
+;; - Output:
+;;   - RPM mode (PWM < threshold): set-rpm with fixed 5000 RPM
+;;   - Duty mode (PWM >= threshold): set-duty
+;;
+;; Usage:
+;; 1. Upload to VESC HP
+;; 2. Script runs automatically after upload
 
 (def *update-interval* 0.05)
 (def *threshold* 0.2)
