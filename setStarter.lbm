@@ -79,5 +79,8 @@
                 (select-motor 1)
                 (set-duty target-duty)))
 
+        ;; Send CAN status updates (for VESC Express monitoring)
+        (can-send-status)
+
         (sleep *update-interval*)
 })
