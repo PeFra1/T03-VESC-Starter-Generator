@@ -29,21 +29,22 @@
 
 ### Firmware/Software Requirements
 
-#### VESC HP Script (T-Motor AT4130 KV230 in RPM mode)
+#### VESC HP Script (T-Motor AT4130 KV230)
 
-The script must implement PWM-based duty cycle control with two modes:
+The script must implement hybrid PWM-based control with two modes:
 
 **Threshold: 30% PWM**
 
 **Mode 1 (PWM < 30%):**
-- Motor runs at fixed duty cycle (configurable parameter)
-- Example: `*fixed-duty* = 15`
+- Motor runs at fixed RPM (*fixed-rpm* parameter, e.g., 3150 RPM)
 - RPM mode active
+- Used for engine cranking at low throttle
 
 **Mode 2 (PWM ≥ 30%):**
 - Motor runs at duty cycle read from PWM input
 - Duty cycle mapped 0-100% from PWM pulse width
-- RPM mode active
+- Duty Cycle mode active
+- Used for direct power control at high throttle
 
 **Additional Requirements:**
 - VESC Express connected via CAN bus
