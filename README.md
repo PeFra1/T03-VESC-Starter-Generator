@@ -3,18 +3,29 @@
 ## LBM Scripting References
 
 ### GitHub Examples
-- **VESC Tool Examples:** https://github.com/vedderb/vesc_tool/tree/master/res/LispBM/Examples
-- **VESC Express Examples:** https://github.com/vedderb/vesc_express/tree/main/lbm_examples
+- **VESC Tool Examples (LispBM):** https://github.com/vedderb/vesc_tool/tree/master/res/LispBM/Examples
+- **VESC Express Examples (Lisp):** https://github.com/vedderb/vesc_express/tree/main/lbm_examples
 
 ### Documentation
 - **VESC LispBM Examples:** https://vedderb-bldc.mintlify.app/lispbm/examples
 - **VESC Extensions:** https://vedderb-bldc.mintlify.app/lispbm/vesc-extensions
 
 ### Key Notes
-- VESC LBM doesn't have built-in `min`/`max` - use `if` statements (see T02 scripts)
+- **VESC LBM** (VESC HP) doesn't have built-in `min`/`max` - use `if` statements (see T02 scripts)
+- **VESC Express** uses standard Scheme/Lisp with `min`/`max`
 - PWM input is read via `get-PPM` (returns -1.0 to +1.0)
-- Always use `timeout-reset` in motor control loops
+- **Always use `timeout-reset`** in motor control loops to prevent faults
 - `limit` function doesn't exist - implement with conditional logic
+- Use multiple `print` args instead of `str`/`format`/`concat`
+
+### Notable Examples from vesc_tool
+| Example | Purpose | Relevance to T03 |
+|---------|---------|------------------|
+| `ppm_read.lbm` | Read PPM input and set duty | Direct reference for PWM reading |
+| `can_pos_follow.lbm` | CAN communication + `timeout-reset` | CAN monitoring pattern |
+| `duty_ramp_imperative.lbm` | Motor control with state | Motor control loop pattern |
+| `balance.lbm` | Complex motor control | Full example with `timeout-reset` |
+| `log_can.lbm` | CAN logging | Monitoring via VESC Express |
 
 ## Setup Notes
 
