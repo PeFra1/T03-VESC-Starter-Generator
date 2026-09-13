@@ -42,7 +42,7 @@
 2. [ ] Export current VESC config (XML)
 3. [ ] Document PWM input mapping
 4. [ ] Test basic motor rotation
-5. [ ] Implement starter script
+5. [ ] **Hybrid modes: RPM (<30% PWM) + Duty Cycle (≥30% PWM)**
 6. [ ] **SAFETY: Add timeout-reset to prevent runaway motor**
 7. [ ] Implement debounce for PWM input
 8. [ ] Add RPM limits (min/max safe operating range)
