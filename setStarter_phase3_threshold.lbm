@@ -34,6 +34,7 @@
 ;; Counter for logging
 (def *log-counter* 0)
 (def *mode* 0)                ;; 0 = RPM, 1 = Duty
+(def *duty-limit* 0.0)        ;; Global variable for duty limit (used in logging)
 
 ;; === MAIN ===
 
@@ -61,13 +62,12 @@
             (progn
                 (setq *mode* 1)
                 ;; Limit duty cycle to ±50% using if (like T02 scripts)
-                (var duty-limit pwm-duty)
                 (if (> pwm-duty *max-duty*)
-                    (setq duty-limit *max-duty*)
+                    (setq *duty-limit* *max-duty*)
                     (if (< pwm-duty (- *max-duty*))
-                        (setq duty-limit (- *max-duty*))
-                        duty-limit))
-                (set-duty duty-limit)))
+                        (setq *duty-limit* (- *max-duty*))
+                        (setq *duty-limit* pwm-duty)))
+                (set-duty *duty-limit*)))
 
         ;; Increment counter
         (setq *log-counter* (+ *log-counter* 1))
@@ -78,7 +78,7 @@
                 (setq *log-counter* 0)
                 (if (= *mode* 0)
                     (print "Mode: RPM (5000 RPM)")
-                    (print (str-from-n duty-limit "Mode: Duty (%.1f%%)")))))
+                    (print (str-from-n *duty-limit* "Mode: Duty (%.1f%%)")))))
 
         ;; Reset timeout to prevent fault
         (timeout-reset)
