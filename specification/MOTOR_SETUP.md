@@ -1,5 +1,7 @@
 # T-Motor AT4130 KV230 - VESC FOC Setup
 
+**Datasheet:** [TMotor AT4130 Long Shaft Motor](https://store.tmotor.com/product/at4130-long-shaft-fixed-wing-motor.html?srsltid=AfmBOor3jltLm7XQg7X0c8YeBHvvAZ2COdoFQoErVvohIMKbULhLAjmh)
+
 ## Motor Specifications
 
 | Parameter | Value |

@@ -57,26 +57,23 @@
 - **Function:** Monitoring only (script runs locally on VESC HP)
 
 ### Motor: T-Motor AT4130 KV230
+
+**Datasheet:** [TMotor AT4130 Long Shaft Motor](https://store.tmotor.com/product/at4130-long-shaft-fixed-wing-motor.html?srsltid=AfmBOor3jltLm7XQg7X0c8YeBHvvAZ2COdoFQoErVvohIMKbULhLAjmh)
+
 | Parameter | Value | Notes |
 |-----------|-------|-------|
 | Model | AT4130 KV230 | Brushless DC motor |
 | KV rating | 230 RPM/V | Speed constant |
-| Poles | Unknown | Check datasheet (likely 14) |
-| Flux linkage | Unknown | Need from datasheet |
-| Resistance | Unknown | Need from datasheet |
-| Inductance | Unknown | Need from datasheet |
-| Max current | Unknown | Check datasheet |
-| Max voltage | Unknown | Check datasheet |
+| Poles | 14 (7 pole pairs) | From datasheet: 12N14P |
+| Flux linkage | ~0.0065 Wb | Calculated from KV |
+| Resistance | 0.06 Ω | From datasheet |
+| Inductance | ~0.02 mH | Estimated (use autodetect) |
+| Max current | 60A (180s) | From datasheet |
+| Max voltage | 12S LiPo (50.4V) | From datasheet |
 
-**VESC FOC Setup requires:**
-- Number of pole pairs
-- Flux linkage (λ)
-- Resistance (R)
-- Inductance (d-axis Ld, q-axis Lq)
+**VESC FOC Setup:** See `specification/MOTOR_SETUP.md` for detailed parameters.
 
-**Datasheet search:**
-- T-Motor AT4130 KV230 documentation
-- Motor parameters for VESC FOC autodetection or manual setup
+**Datasheet search:** TMotor AT4130 KV230 documentation
 
 ### How It Works
 1. Script (`setStarter.lbm`) is uploaded to **VESC HP** via VESC Tool over WiFi
