@@ -56,6 +56,28 @@
 - **VESC Express:** CAN ID **6** (gateway to PC)
 - **Function:** Monitoring only (script runs locally on VESC HP)
 
+### Motor: T-Motor AT4130 KV230
+| Parameter | Value | Notes |
+|-----------|-------|-------|
+| Model | AT4130 KV230 | Brushless DC motor |
+| KV rating | 230 RPM/V | Speed constant |
+| Poles | Unknown | Check datasheet (likely 14) |
+| Flux linkage | Unknown | Need from datasheet |
+| Resistance | Unknown | Need from datasheet |
+| Inductance | Unknown | Need from datasheet |
+| Max current | Unknown | Check datasheet |
+| Max voltage | Unknown | Check datasheet |
+
+**VESC FOC Setup requires:**
+- Number of pole pairs
+- Flux linkage (λ)
+- Resistance (R)
+- Inductance (d-axis Ld, q-axis Lq)
+
+**Datasheet search:**
+- T-Motor AT4130 KV230 documentation
+- Motor parameters for VESC FOC autodetection or manual setup
+
 ### How It Works
 1. Script (`setStarter.lbm`) is uploaded to **VESC HP** via VESC Tool over WiFi
 2. Script runs **locally** on VESC HP, controlling motor with `set-rpm`/`set-duty`
@@ -106,6 +128,7 @@
 9. [ ] **SAFETY: Add timeout-reset to prevent runaway motor**
 10. [ ] Implement debounce for PWM input
 11. [ ] Add RPM limits (min/max safe operating range)
-12. [ ] Test PWM threshold switching (30%)
+12. [ ] Test PWM threshold switching (20%)
 13. [ ] Validate VESC Tool WLAN connection
 14. [ ] Engine test: full start sequence
+15. [ ] **Find T-Motor AT4130 KV230 documentation and create VESC motor setup**
