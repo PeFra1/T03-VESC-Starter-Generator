@@ -32,6 +32,12 @@
 ;; (e.g., 15.0 = 15 RPM in Mode 1, or 5000 RPM from PWM in Mode 2).
 ;; VESC Express connected via CAN bus for system monitoring.
 ;; WLAN enabled for VESC Tool monitoring via PC.
+;;
+;; TODO (SAFETY):
+;; - Add timeout-reset to prevent runaway motor (see setDuo scripts)
+;; - Add PWM debounce to filter noise (see VESC LBM docs for debounce)
+;; - Add RPM limits (min/max safe operating range)
+;; - Add motor stall detection
 
 ;; Configuration constants
 (def *pwm-threshold* 0.30)    ;; PWM threshold (30%)
