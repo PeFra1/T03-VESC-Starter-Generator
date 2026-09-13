@@ -1,49 +1,53 @@
 # AT4130 KV230 Motor Settings (XML Export)
 
-This file should be filled with actual XML export from VESC Tool.
+## VESC HP Export (Original)
+- `AT4130_KV230_vesc_mcconf_EXPORTED.xml` — izvorni export iz VESC Toola
 
-## How to Export:
-1. Connect VESC to VESC Tool
-2. Go to **Configuration** tab
-3. Click **Export** → **Export Current Configuration**
-4. Save as `AT4130_KV230_vesc_mcconf.xml`
+## Required Changes for Starter-Generator Application
 
-## Expected Contents:
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<MCConfiguration>
-    <!-- Basic Motor Settings -->
-    <si-motor-poles>14</si-motor-poles>
-    <si-gear-ratio>1.0</si-gear-ratio>
-    
-    <!-- Current Limits -->
-    <l-current-max>30</l-current-max>
-    <l-current-min>-30</l-current-min>
-    <l-max-erpm>50000</l-max-erpm>
-    <l-min-erpm>-50000</l-min-erpm>
-    
-    <!-- Battery Settings -->
-    <l-battery-cut-start>20.4</l-battery-cut-start>
-    <l-battery-cut-end>18.0</l-battery-cut-end>
-    <si-battery-cells>6</si-battery-cells>
-    
-    <!-- FOC Parameters (if using FOC) -->
-    <foc-motor-r>???</foc-motor-r>
-    <foc-motor-l>???</foc-motor-l>
-    <foc-motor-flux-linkage>???</foc-motor-flux-linkage>
-    
-    <!-- Openloop Settings for Starter Mode -->
-    <foc-openloop-rpm>1000</foc-openloop-rpm>
-    <foc-sl-openloop-time>0.05</foc-sl-openloop-time>
-    
-    <!-- Other Settings -->
-    <l-max-duty>0.95</l-max-duty>
-    <l-min-duty>-0.95</l-min-duty>
-</MCConfiguration>
+### Battery Settings (CRITICAL)
+| Parameter | Original | Required | Reason |
+|-----------|----------|----------|--------|
+| `si-battery-cells` | 12 | **6** | 24V lab power supply (6S LiPo = ~22.2V) |
+| `l-battery-cut-start` | 40.8V | **20.4V** | 3.4V × 6 cells |
+| `l-battery-cut-end` | 36V | **18.0V** | 3.0V × 6 cells |
+
+### Other Parameters (Review)
+| Parameter | Value | Notes |
+|-----------|-------|-------|
+| `si-motor-poles` | 14 | Verify from motor label |
+| `si-gear-ratio` | 2.769 | Change to 1.0 if direct drive |
+| `l-current-max` | 50A | OK for testing |
+| `foc-openloop-rpm` | 1400 | Good for engine cranking |
+| `foc-sl-openloop-time` | 0.05 | Good for testing |
+
+## Setup Instructions
+
+### 1. Connect VESC HP to VESC Tool
+- USB connection
+- Go to **Configuration** tab
+
+### 2. Apply Battery Settings
+```
+Battery Cells: 6
+Battery Cut Start: 20.4V
+Battery Cut End: 18.0V
 ```
 
-## Post-Export Steps:
-1. Replace `???` with actual measured values
-2. Adjust `si-motor-poles` based on motor label/datasheet
-3. Adjust current limits based on actual motor rating
-4. Test at low power first (5-10% duty cycle)
+### 3. Verify Motor Settings
+```
+Motor Poles: 14 (or 28)
+Gear Ratio: 1.0 (if direct drive)
+```
+
+### 4. Save and Test
+1. Click **Write** to apply settings
+2. Disconnect USB
+3. Connect to 24V lab power supply
+4. Test at low duty cycle (5-10%)
+
+## Notes
+- Original export was configured for 12S battery (44.4V)
+- For 24V lab power: use 6S settings (22.2V)
+- Monitor temperature during initial testing
+- Use RPM mode for cranking (<30% PWM), Duty Cycle for power (≥30%)
