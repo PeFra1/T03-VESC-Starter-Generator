@@ -1,0 +1,63 @@
+;; Copyright (c) 2026 StratoWAVE
+;; Author: Petar Franček (external contributor, Zagreb)
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;; Based on VESC Project (https://vesc-project.com)
+;;
+;; setStarter_phase2_duty.lbm - Phase 2: PWM to Duty Cycle mapping
+;;
+;; This script reads PWM input and sets motor duty cycle with ±50% limit
+;;
+;; Architecture:
+;; - Input: get-PPM returns -1.0 to +1.0 (PWM duty cycle)
+;; - Output: set-duty with abs limited to 0.5 (50% max)
+;;
+;; Usage:
+;; 1. Upload to VESC HP
+;; 2. Script runs automatically after upload
+;; 3. Monitor via VESC Tool console (update every 1s)
+
+;; Configuration
+(def *update-interval* 0.05)  ;; Update every 0.05s (20Hz)
+(def *log-interval* 20)       ;; Log every 20 updates (1s)
+(def *max-duty* 0.5)          ;; Max duty cycle = 50%
+
+;; Counter for logging
+(def *log-counter* 0)
+
+;; === MAIN ===
+
+(print "=== VESC HP Phase 2: PWM to Duty Cycle ===")
+(print "Input: get-PPM (-1.0 to +1.0)")
+(print "Output: set-duty (abs limited to 0.5)")
+(print "Max Duty: 50%")
+(print "=============================================")
+
+;; Main loop - PWM to duty cycle mapping
+(loopwhile t {
+        ;; Read PWM input (-1.0 to +1.0)
+        (var pwm-duty (get-PPM))
+
+        ;; Limit duty cycle to ±50%
+        (var duty-limit (limit pwm-duty *max-duty* (- *max-duty*)))
+
+        ;; Set motor duty cycle
+        (set-duty duty-limit)
+
+        ;; Increment counter
+        (setq *log-counter* (+ *log-counter* 1))
+
+        ;; Log every 20 updates (1 second)
+        (if (>= *log-counter* *log-interval*)
+            (progn
+                (setq *log-counter* 0)
+                (print "PWM:")
+                (print (* pwm-duty 100.0))
+                (print "% -> Duty:")
+                (print (* duty-limit 100.0))
+                (print "%")))
+
+        ;; Reset timeout to prevent fault
+        (timeout-reset)
+
+        (sleep *update-interval*)
+})
