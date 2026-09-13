@@ -1,0 +1,93 @@
+;; Copyright (c) 2026 StratoWAVE
+;; Author: Petar Franček (external contributor, Zagreb)
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;; Based on VESC Project (https://vesc-project.com)
+;;
+;; setStarter_phase3_threshold.lbm - Phase 3: Dual-mode control with threshold
+;;
+;; This script reads PWM input and switches between RPM mode and duty cycle mode
+;; based on a configurable threshold.
+;;
+;; Architecture:
+;; - Input: get-PPM returns -1.0 to +1.0 (PWM duty cycle)
+;; - Threshold: Configurable PWM threshold (default 30% = 0.3)
+;; - Output: 
+;;   - RPM mode (PWM < threshold): set-rpm with fixed 5000 RPM
+;;   - Duty mode (PWM >= threshold): set-duty with ±50% limit
+;;
+;; Usage:
+;; 1. Upload to VESC HP
+;; 2. Script runs automatically after upload
+;; 3. Monitor via VESC Tool console (update every 1s)
+
+;; === CONFIGURATION ===
+
+(def *update-interval* 0.05)  ;; Update every 0.05s (20Hz)
+(def *log-interval* 20)       ;; Log every 20 updates (1s)
+(def *threshold* 0.3)         ;; PWM threshold for mode switch (30%)
+(def *max-duty* 0.5)          ;; Max duty cycle = 50%
+
+;; === DEBUG OPTIONS ===
+
+(def *debug-mode* 1)          ;; 0 = silent, 1 = log updates
+
+;; Counter for logging
+(def *log-counter* 0)
+
+;; === MAIN ===
+
+(print "=== VESC HP Phase 3: Threshold-based Dual-Mode ===")
+(print "Input: get-PPM (-1.0 to +1.0)")
+(print "Threshold: 30% (configurable)")
+(print "Mode 1 (RPM): PWM < 30% -> set-rpm (5000 RPM fixed)")
+(print "Mode 2 (Duty): PWM >= 30% -> set-duty (±50% limit)")
+(print "=================================================")
+(print "")
+
+;; Main loop - Dual-mode control with threshold
+(loopwhile t {
+        ;; Read PWM input (-1.0 to +1.0)
+        (var pwm-duty (get-PPM))
+
+        ;; Determine mode based on threshold
+        (var mode "unknown")
+        (var target 0.0)
+
+        (if (< pwm-duty *threshold*)
+            ;; === RPM MODE (PWM < threshold) ===
+            (progn
+                (setq mode "RPM")
+                ;; Fixed 5000 RPM
+                (set-rpm 5000)
+                (setq target 5000))
+            ;; === DUTY MODE (PWM >= threshold) ===
+            (progn
+                (setq mode "DUTY")
+                ;; Limit duty cycle to ±50% using if (like T02 scripts)
+                (var duty-limit pwm-duty)
+                (if (> pwm-duty *max-duty*)
+                    (setq duty-limit *max-duty*)
+                    (if (< pwm-duty (- *max-duty*))
+                        (setq duty-limit (- *max-duty*))
+                        duty-limit))
+                (set-duty duty-limit)
+                (setq target duty-limit)))
+
+        ;; Increment counter
+        (setq *log-counter* (+ *log-counter* 1))
+
+        ;; Log every 20 updates (1 second)
+        (if (and (= *debug-mode* 1) (>= *log-counter* *log-interval*))
+            (progn
+                (setq *log-counter* 0)
+                (print "Mode:")
+                (print mode)
+                (if (= mode "RPM")
+                    (print (str-from-n target "RPM: %.1f"))
+                    (print (str-from-n target "Duty: %.1f%%")))))
+
+        ;; Reset timeout to prevent fault
+        (timeout-reset)
+
+        (sleep *update-interval*)
+})
