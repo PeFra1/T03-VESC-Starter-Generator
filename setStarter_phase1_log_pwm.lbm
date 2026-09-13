@@ -51,5 +51,8 @@
                 (setq *log-counter* 0)
                 (print (str (format "%.2f" pwm-percent) "% duty (" (format "%.3f" pwm-duty) ")"))))
 
+        ;; Reset timeout to prevent fault
+        (timeout-reset)
+
         (sleep *update-interval*)
 })
