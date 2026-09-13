@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MCConfiguration>
+    <ConfigVersion>4</ConfigVersion>
+    <!-- Battery Settings (6S LiPo / 24V lab power) -->
+    <si_battery_cells>6</si_battery_cells>
+    <l_battery_cut_start>20.4</l_battery_cut_start>
+    <l_battery_cut_end>18.0</l_battery_cut_end>
+    <!-- Gear Ratio (direct drive) -->
+    <si_gear_ratio>1.0</si_gear_ratio>
+    <!-- FOC Parameters (from measurement) -->
+    <foc_motor_r>0.015</foc_motor_r>
+    <foc_motor_l>7e-06</foc_motor_l>
+    <foc_motor_flux_linkage>0.00245</foc_motor_flux_linkage>
+    <!-- Openloop Settings -->
+    <foc_openloop_rpm>1500</foc_openloop_rpm>
+    <foc_sl_openloop_time>0.05</foc_sl_openloop_time>
+</MCConfiguration>
