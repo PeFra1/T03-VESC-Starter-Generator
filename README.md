@@ -12,25 +12,31 @@
    (PWM out)
        │
        ▼
-  [VESC HP 6MKvi]
-   (PWM in, CAN)
-       │          │
-       │          ▼
-       │     [VESC Express]
+  [VESC HP 6MKvi]  ← Local script control (set-rpm / set-duty)
+   (PWM in, CAN)       Motor: T-Motor AT4130 KV230
        │
        ▼
-[T-Motor AT4130 KV230]
- (generator/starter)
+   [VESC Express]
+   (CAN, WLAN to PC)
+       │
+       ▼
+  [PC - VESC Tool]
+  (monitoring via WiFi)
 ```
 
-### Power Supply Settings
-- Channel 1: 24V / 1A (main VESC power)
-- Channel 2: 24V / 1A (backup/starter辅助)
+### CAN Bus Configuration
+- **VESC HP:** CAN ID **100** (controls motor locally)
+- **VESC Express:** CAN ID **6** (gateway to PC)
+- **Function:** Monitoring only (script runs locally on VESC HP)
 
-### CAN Configuration
-- VESC HP: CAN ID ____
-- VESC Express: CAN ID ____
-- Baud rate: 500k
+### How It Works
+1. Script (`setStarter.lbm`) is uploaded to **VESC HP** via VESC Tool over WiFi
+2. Script runs **locally** on VESC HP, controlling motor with `set-rpm`/`set-duty`
+3. VESC Express forwards status data via CAN for real-time monitoring
+4. User monitors RPM, current, duty cycle, temperature via VESC Tool on PC
+
+### Power Supply Settings
+- 24V / 1A lab power supply (6S LiPo equivalent)
 
 ### CCPM Servo Consistency Master
 - Connect to VESC PWM output
@@ -42,7 +48,7 @@
 2. [ ] Export current VESC config (XML)
 3. [ ] Document PWM input mapping
 4. [ ] Test basic motor rotation
-5. [ ] **Hybrid modes: RPM (<30% PWM) + Duty Cycle (≥30% PWM)**
+5. [ ] **Upload setStarter.lbm to VESC HP via WiFi (Express)**
 6. [ ] **SAFETY: Add timeout-reset to prevent runaway motor**
 7. [ ] Implement debounce for PWM input
 8. [ ] Add RPM limits (min/max safe operating range)
