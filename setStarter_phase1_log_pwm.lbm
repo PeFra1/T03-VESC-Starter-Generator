@@ -49,7 +49,11 @@
         (if (>= *log-counter* *log-interval*)
             (progn
                 (setq *log-counter* 0)
-                (print (concat (format "%.2f" pwm-percent) "% duty (" (format "%.3f" pwm-duty) ")"))))
+                (print "PWM:")
+                (print pwm-percent)
+                (print "% duty (")
+                (print pwm-duty)
+                (print ")")))
 
         ;; Reset timeout to prevent fault
         (timeout-reset)
