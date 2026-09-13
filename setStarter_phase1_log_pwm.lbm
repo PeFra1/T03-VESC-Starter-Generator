@@ -46,11 +46,10 @@
         (setq *log-counter* (+ *log-counter* 1))
 
         ;; Log every 20 updates (1 second)
-        (if (== *log-counter* *log-interval*)
+        (if (>= *log-counter* *log-interval*)
             (progn
                 (setq *log-counter* 0)
-                (print (str (format "%.2f" pwm-percent) "% duty (" (format "%.3f" pwm-duty) ")")))
-            (setq *log-counter* (+ *log-counter* 1)))
+                (print (str (format "%.2f" pwm-percent) "% duty (" (format "%.3f" pwm-duty) ")"))))
 
         ;; Reset timeout to prevent fault
         (timeout-reset)
