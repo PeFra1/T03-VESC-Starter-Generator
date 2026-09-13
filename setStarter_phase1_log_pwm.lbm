@@ -3,15 +3,15 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Based on VESC Project (https://vesc-project.com)
 ;;
-;; setStarter_phase1_log_pwm.lbm - Phase 1: Log PWM input for debugging
+;; setStarter_phase1_log_pwm.lbm - Phase 1: Log PPM input for debugging
 ;;
-;; This script reads PWM input and logs:
-;; - PWM duty cycle (0-1)
-;; - PWM duty cycle percentage (0-100)
-;; - Timestamp for rate calculation
+;; This script reads PPM input and logs:
+;; - PPM duty cycle (0-1)
+;; - PPM percentage (0-100)
+;;
+;; Note: VESC PPM input is read via get-PPM (not get-pwm-input-duty)
 
 ;; Configuration
-(def *pwm-input* 1)           ;; PWM input channel (1 = main PWM input)
 (def *update-interval* 0.05)  ;; Update every 0.05s (20Hz)
 (def *log-interval* 20)       ;; Log every 20 updates (1s)
 
@@ -20,17 +20,17 @@
 
 ;; === MAIN ===
 
-(print "=== VESC HP Phase 1: PWM Logger ===")
-(print "PWM Input: Channel 1")
+(print "=== VESC HP Phase 1: PPM Logger ===")
+(print "PPM Input: Default channel")
 (print "Update Rate: 20Hz (every 0.05s)")
 (print "Log Interval: 1s")
-(print "===================================")
+(print "====================================")
 
-;; Main loop - log PWM input
+;; Main loop - log PPM input
 (loopwhile t {
-        ;; Read PWM directly (no function wrapper to debug)
-        (var pwm-duty (get-pwm-input-duty *pwm-input*))
-        (var pwm-percent (* pwm-duty 100.0))
+        ;; Read PPM directly (0.0 - 1.0)
+        (var ppm-duty (get-PPM))
+        (var ppm-percent (* ppm-duty 100.0))
 
         ;; Increment counter
         (setq *log-counter* (+ *log-counter* 1))
@@ -39,10 +39,10 @@
         (if (>= *log-counter* *log-interval*)
             (progn
                 (setq *log-counter* 0)
-                (print "PWM:")
-                (print pwm-percent)
+                (print "PPM:")
+                (print ppm-percent)
                 (print "% duty (")
-                (print pwm-duty)
+                (print ppm-duty)
                 (print ")")))
 
         ;; Reset timeout to prevent fault
