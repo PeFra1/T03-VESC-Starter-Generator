@@ -22,10 +22,38 @@
 | Motor 1 | T-Motor AT4130 KV230 (generator/starter) |
 | Engine | Gasoline engine (unspecified) |
 | VESC 1 | VESC HP 6MKvi (controls generator motor) |
-| VESC 2 | VESC Express (unspecified role) |
+| VESC 2 | VESC Express (CAN connected, WLAN to PC) |
 | Flight Controller | Pixhawk (generates PWM based on RC input) |
 | Calibration Tool | CCPM Servo Consistency Master |
 | Wiring | PWM from VESC to CCPM, CAN from VESC to VESC Express |
+
+### Firmware/Software Requirements
+
+#### VESC HP Script (T-Motor AT4130 KV230 in RPM mode)
+
+The script must implement PWM-based duty cycle control with two modes:
+
+**Threshold: 30% PWM**
+
+**Mode 1 (PWM < 30%):**
+- Motor runs at fixed duty cycle (configurable parameter)
+- Example: `*fixed-duty* = 15`
+- RPM mode active
+
+**Mode 2 (PWM ≥ 30%):**
+- Motor runs at duty cycle read from PWM input
+- Duty cycle mapped 0-100% from PWM pulse width
+- RPM mode active
+
+**Additional Requirements:**
+- VESC Express connected via CAN bus
+- WLAN connection to PC for VESC Tool monitoring
+- Parameters must be visible in VESC Tool (PC)
+
+#### VESC Express Role
+- CAN interface to main system
+- WLAN hotspot/STA for VESC Tool connection
+- No custom script required (default VESC Express firmware)
 
 ### Tasks
 
@@ -34,16 +62,22 @@
 - [ ] Connect Pixhawk PWM output to VESC PWM input
 - [ ] Connect VESC to VESC Express via CAN bus
 - [ ] Set up CCPM Servo Consistency Master for signal validation
+- [ ] Configure VESC Express WLAN (hotspot or STA)
 
 #### Firmware/Software
 - [ ] Configure VESC HP for starter mode
-- [ ] Implement PWM-to-RPM mapping
-- [ ] Configure auto-switch to generation mode after engine starts
-- [ ] Test start sequence (crank → engine fires → switch to gen mode)
-- [ ] Test manual cancel (button release during cranking)
+- [ ] Write LBM script with PWM threshold logic (30%)
+- [ ] Implement fixed duty cycle parameter (Mode 1)
+- [ ] Implement PWM-read duty cycle (Mode 2)
+- [ ] Ensure both modes use RPM control
+- [ ] Configure CAN settings for VESC Express
+- [ ] Enable VESC Tool monitoring via WLAN
 
 #### Testing
-- [ ] Bench test: cranking sequence with dummy load
+- [ ] Bench test: verify PWM threshold switching
+- [ ] Bench test: fixed duty cycle mode (<30% PWM)
+- [ ] Bench test: PWM-read duty cycle mode (≥30% PWM)
+- [ ] Validate VESC Tool WLAN connection
 - [ ] Engine test: full start sequence with gasoline engine
 - [ ] Validation: CCPM signal consistency
 
