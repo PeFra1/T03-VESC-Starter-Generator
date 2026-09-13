@@ -42,16 +42,43 @@
 - Connect to VESC PWM output
 - Verify signal consistency during operation
 
+## Firmware Update Checklist
+
+### VESC HP 6MKvi
+| Item | Status |
+|------|--------|
+| Firmware version | Check in VESC Tool → Info tab |
+| Required FW version | Latest stable (check VESC docs) |
+| Backup config | Export XML before update |
+| Update method | USB → VESC Tool → Firmware tab |
+
+### VESC Express
+| Item | Status |
+|------|--------|
+| Firmware version | Check in VESC Tool → Info tab |
+| Required FW version | Compatible with VESC HP |
+| Backup config | Export XML before update |
+| Update method | WiFi → VESC Tool → Firmware tab |
+
+### Post-Update Verification
+- [ ] Verify CAN communication between HP and Express
+- [ ] Test script upload via WiFi gateway
+- [ ] Verify monitoring in VESC Tool
+- [ ] Test PWM input threshold switching
+
 ## Next Steps
 
-1. [ ] Verify VESC HP firmware version
-2. [ ] Export current VESC config (XML)
-3. [ ] Document PWM input mapping
-4. [ ] Test basic motor rotation
-5. [ ] **Upload setStarter.lbm to VESC HP via WiFi (Express)**
-6. [ ] **SAFETY: Add timeout-reset to prevent runaway motor**
-7. [ ] Implement debounce for PWM input
-8. [ ] Add RPM limits (min/max safe operating range)
-9. [ ] Test PWM threshold switching (30%)
-10. [ ] Validate VESC Tool WLAN connection
-11. [ ] Engine test: full start sequence
+1. [ ] **Update VESC HP firmware** (backup config first)
+2. [ ] **Update VESC Express firmware** (backup config first)
+3. [ ] Verify VESC Tool WiFi connection to Express
+4. [ ] Verify CAN communication (HP ID 100 ↔ Express ID 6)
+5. [ ] Export current VESC config (XML)
+6. [ ] Document PWM input mapping
+7. [ ] Test basic motor rotation
+8. [ ] Upload setStarter.lbm to VESC HP via WiFi (Express)
+9. [ ] **SAFETY: Add timeout-reset to prevent runaway motor**
+10. [ ] Implement debounce for PWM input
+11. [ ] Add RPM limits (min/max safe operating range)
+12. [ ] Test PWM threshold switching (30%)
+13. [ ] Validate VESC Tool WLAN connection
+14. [ ] Engine test: full start sequence
