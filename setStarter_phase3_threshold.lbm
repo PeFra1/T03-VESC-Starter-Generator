@@ -78,7 +78,7 @@
                 (setq *log-counter* 0)
                 (if (= *mode* 0)
                     (print "Mode: RPM (5000 RPM)")
-                    (print (str-from-n *duty-limit* "Mode: Duty (%.1f%%)")))))
+                    (print (str-from-n *duty-limit* "Mode: Duty (%.2f%%)")))))
 
         ;; Reset timeout to prevent fault
         (timeout-reset)
