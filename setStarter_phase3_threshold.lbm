@@ -83,8 +83,12 @@
                 (print "Mode:")
                 (print mode)
                 (if (= mode "RPM")
-                    (print (str-from-n target "RPM: %.1f"))
-                    (print (str-from-n target "Duty: %.1f%%")))))
+                    (progn
+                        (print "5000 RPM")
+                        (print ""))
+                    (progn
+                        (print (str-from-n target "Duty: %.1f%%"))
+                        (print "")))))
 
         ;; Reset timeout to prevent fault
         (timeout-reset)
