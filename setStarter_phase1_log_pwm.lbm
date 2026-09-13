@@ -1,0 +1,55 @@
+;; Copyright (c) 2026 StratoWAVE
+;; Author: Petar Franček (external contributor, Zagreb)
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;; Based on VESC Project (https://vesc-project.com)
+;;
+;; setStarter_phase1_log_pwm.lbm - Phase 1: Log PWM input for debugging
+;;
+;; This script reads PWM input and logs:
+;; - PWM duty cycle (0-1)
+;; - PWM duty cycle percentage (0-100)
+;; - Timestamp for rate calculation
+
+;; Configuration
+(def *pwm-input* 1)           ;; PWM input channel (1 = main PWM input)
+(def *update-interval* 0.05)  ;; Update every 0.05s (20Hz)
+(def *log-interval* 20)       ;; Log every 20 updates (1s)
+
+;; Counter for logging
+(def *log-counter* 0)
+
+;; === PWM FUNCTIONS ===
+
+(defun read-pwm-duty ()
+  "Read PWM input duty cycle (0.0 - 1.0)."
+  (get-pwm-input-duty *pwm-input*))
+
+(defun read-pwm-percent ()
+  "Read PWM input duty cycle as percentage (0 - 100)."
+  (* (read-pwm-duty) 100.0))
+
+;; === MAIN ===
+
+(print "=== VESC HP Phase 1: PWM Logger ===")
+(print "PWM Input: Channel 1")
+(print "Update Rate: 20Hz (every 0.05s)")
+(print "Log Interval: 1s")
+(print "===================================")
+
+;; Main loop - log PWM input
+(loopwhile t {
+        ;; Read PWM
+        (var pwm-duty (read-pwm-duty))
+        (var pwm-percent (read-pwm-percent))
+
+        ;; Increment counter
+        (setq *log-counter* (+ *log-counter* 1))
+
+        ;; Log every 20 updates (1 second)
+        (if (== (*log-counter* *log-interval*))
+            (progn
+                (setq *log-counter* 0)
+                (print (str (format "%.2f" pwm-percent) "% duty (" (format "%.3f" pwm-duty) ")"))))
+
+        (sleep *update-interval*)
+})
