@@ -1,5 +1,21 @@
 # T03 - VESC Starter Generator
 
+## LBM Scripting References
+
+### GitHub Examples
+- **VESC Tool Examples:** https://github.com/vedderb/vesc_tool/tree/master/res/LispBM/Examples
+- **VESC Express Examples:** https://github.com/vedderb/vesc_express/tree/main/lbm_examples
+
+### Documentation
+- **VESC LispBM Examples:** https://vedderb-bldc.mintlify.app/lispbm/examples
+- **VESC Extensions:** https://vedderb-bldc.mintlify.app/lispbm/vesc-extensions
+
+### Key Notes
+- VESC LBM doesn't have built-in `min`/`max` - use `if` statements (see T02 scripts)
+- PWM input is read via `get-PPM` (returns -1.0 to +1.0)
+- Always use `timeout-reset` in motor control loops
+- `limit` function doesn't exist - implement with conditional logic
+
 ## Setup Notes
 
 ### Hardware Connection Diagram
