@@ -37,8 +37,8 @@
         ;; Read PWM input (-1.0 to +1.0)
         (var pwm-duty (get-PPM))
 
-        ;; Limit duty cycle to ±50%
-        (var duty-limit (limit pwm-duty *max-duty* (- *max-duty*)))
+        ;; Limit duty cycle to ±50% using min/max
+        (var duty-limit (max (- *max-duty*) (min *max-duty* pwm-duty)))
 
         ;; Set motor duty cycle
         (set-duty duty-limit)
