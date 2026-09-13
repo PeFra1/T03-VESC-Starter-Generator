@@ -18,16 +18,6 @@
 ;; Counter for logging
 (def *log-counter* 0)
 
-;; === PWM FUNCTIONS ===
-
-(defun read-pwm-duty ()
-  "Read PWM input duty cycle (0.0 - 1.0)."
-  (get-pwm-input-duty *pwm-input*))
-
-(defun read-pwm-percent ()
-  "Read PWM input duty cycle as percentage (0 - 100)."
-  (* (read-pwm-duty) 100.0))
-
 ;; === MAIN ===
 
 (print "=== VESC HP Phase 1: PWM Logger ===")
@@ -38,9 +28,9 @@
 
 ;; Main loop - log PWM input
 (loopwhile t {
-        ;; Read PWM
-        (var pwm-duty (read-pwm-duty))
-        (var pwm-percent (read-pwm-percent))
+        ;; Read PWM directly (no function wrapper to debug)
+        (var pwm-duty (get-pwm-input-duty *pwm-input*))
+        (var pwm-percent (* pwm-duty 100.0))
 
         ;; Increment counter
         (setq *log-counter* (+ *log-counter* 1))
