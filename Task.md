@@ -33,16 +33,16 @@
 
 The script must implement hybrid PWM-based control with two modes:
 
-**Threshold: 30% PWM**
+**Threshold: 20% PWM**
 
-**Mode 1 (PWM < 30%):**
-- Motor runs at fixed RPM (*fixed-rpm* parameter, e.g., 3150 RPM)
+**Mode 1 (PWM < 20%):**
+- Motor runs at fixed RPM (5000 RPM)
 - RPM mode active
 - Used for engine cranking at low throttle
 
-**Mode 2 (PWM ≥ 30%):**
+**Mode 2 (PWM ≥ 20%):**
 - Motor runs at duty cycle read from PWM input
-- Duty cycle mapped 0-100% from PWM pulse width
+- Duty cycle mapped ±50% from PWM
 - Duty Cycle mode active
 - Used for direct power control at high throttle
 
@@ -50,6 +50,9 @@ The script must implement hybrid PWM-based control with two modes:
 - VESC Express connected via CAN bus
 - WLAN connection to PC for VESC Tool monitoring
 - Parameters must be visible in VESC Tool (PC)
+- **Always use `timeout-reset`** in motor control loops
+- **Debounce PWM input** to prevent noise-triggered mode switches
+- **Add RPM limits** for safe motor operation
 
 #### VESC Express Role
 - CAN interface to main system
@@ -67,17 +70,19 @@ The script must implement hybrid PWM-based control with two modes:
 
 #### Firmware/Software
 - [ ] Configure VESC HP for starter mode
-- [ ] Write LBM script with PWM threshold logic (30%)
-- [ ] Implement fixed duty cycle parameter (Mode 1)
-- [ ] Implement PWM-read duty cycle (Mode 2)
-- [ ] Ensure both modes use RPM control
+- [ ] Write LBM script with PWM threshold logic (20%)
+- [ ] Implement fixed RPM mode (5000 RPM, <20% PWM)
+- [ ] Implement PWM-read duty cycle (±50%, ≥20% PWM)
 - [ ] Configure CAN settings for VESC Express
 - [ ] Enable VESC Tool monitoring via WLAN
+- [ ] Add timeout-reset to prevent runaway motor
+- [ ] Implement debounce for PWM input
+- [ ] Add RPM limits (min/max safe operating range)
 
 #### Testing
-- [ ] Bench test: verify PWM threshold switching
-- [ ] Bench test: fixed duty cycle mode (<30% PWM)
-- [ ] Bench test: PWM-read duty cycle mode (≥30% PWM)
+- [ ] Bench test: verify PWM threshold switching (20%)
+- [ ] Bench test: fixed RPM mode (<20% PWM, 5000 RPM)
+- [ ] Bench test: PWM-read duty cycle mode (≥20% PWM, ±50%)
 - [ ] Validate VESC Tool WLAN connection
 - [ ] Engine test: full start sequence with gasoline engine
 - [ ] Validation: CCPM signal consistency
