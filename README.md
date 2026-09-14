@@ -121,11 +121,11 @@
 5. [ ] Export current VESC config (XML)
 6. [ ] Document PWM input mapping
 7. [ ] Test basic motor rotation
-8. [ ] Upload setStarter.lbm to VESC HP via WiFi (Express)
-9. [ ] **SAFETY: Add timeout-reset to prevent runaway motor**
+8. [x] Upload setStarter.lbm to VESC HP via WiFi (Express)
+9. [x] **SAFETY: Add timeout-reset to prevent runaway motor**
 10. [ ] Implement debounce for PWM input
 11. [ ] Add RPM limits (min/max safe operating range)
-12. [ ] Test PWM threshold switching (20%)
-13. [ ] Validate VESC Tool WLAN connection
-14. [ ] Engine test: full start sequence
-15. [ ] **Find T-Motor AT4130 KV230 documentation and create VESC motor setup**
+12. [ ] Test PWM threshold switching (20%) - *Ivan u labu*
+13. [ ] Validate VESC Tool WLAN connection - *Ivan u labu*
+14. [ ] Engine test: full start sequence - *Ivan u labu*
+15. [x] **Find T-Motor AT4130 KV230 documentation and create VESC motor setup**
